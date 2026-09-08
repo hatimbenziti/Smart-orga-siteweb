@@ -1,82 +1,42 @@
 backend:
   name: git-gateway
-  branch: main
+  branch: main # Vérifiez si votre branche principale est 'main' ou 'master'
 
-# Configuration des dossiers médias
-media_folder: "images/uploads"
-public_folder: "/images/uploads"
-
-# Localisation de l'interface
-locale: "fr"
-display_url: "https://smartorga.ma"
+media_folder: "public/uploads"
+public_folder: "/uploads"
 
 collections:
-  # 1. Collection : Voyages Organisés
-  - name: "voyages"
-    label: "Voyages Organisés"
-    label_singular: "Voyage"
-    folder: "content/voyages"
+  # COLLECTION 1 : Gestion des Voyages
+  - name: "trips"
+    label: "Nos Voyages / Séjours"
+    folder: "src/content/trips"
     create: true
     slug: "{{slug}}"
-    format: "json"
-    editor:
-      preview: true
     fields:
-      - { label: "Titre du Séjour", name: "title", widget: "string" }
-      - { label: "Destination", name: "destination", widget: "select", options: ["Dakhla", "Agadir & Taghazout", "Chefchaouen", "Tanger & Nord", "Merzouga & Désert", "Marrakech & Atlas"] }
-      - { label: "Prix (MAD)", name: "price", widget: "number", value_type: "int" }
-      - { label: "Durée", name: "duration", widget: "string", default: "3 Jours / 2 Nuits" }
-      - { label: "Image Principale", name: "image", widget: "image" }
-      - { label: "Badge / Catégorie", name: "category", widget: "select", options: ["Tous les Voyages", "Les Plus Populaires", "Départs Hebdomadaires"], default: "Tous les Voyages" }
-      - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
-      - { label: "Description & Itinéraire", name: "body", widget: "markdown" }
+      - { label: "Titre du voyage", name: "title", widget: "string" }
+      - { label: "Identifiant unique (ID)", name: "id", widget: "string" }
+      - { label: "Sous-titre / Région", name: "subtitle", widget: "string" }
+      - { label: "Catégorie", name: "category", widget: "select", options: ["Désert & Dunes", "Plages & Surf", "Villes Impériales", "Nature & Randonnée"] }
+      - { label: "Prix (MAD)", name: "price", widget: "number" }
+      - { label: "Ancien prix (Biffé)", name: "originalPrice", widget: "number", required: false }
+      - { label: "Durée", name: "duration", widget: "string" }
+      - { label: "Image principale", name: "image", widget: "image" }
+      - { label: "Populaire ?", name: "isPopular", widget: "boolean", default: true }
+      - { label: "Note (ex: 4.9)", name: "rating", widget: "number", value_type: "float", default: 4.9 }
+      - { label: "Nombre d'avis", name: "reviewsCount", widget: "number", default: 100 }
+      - { label: "Points forts", name: "highlights", widget: "list" }
 
-  # 2. Collection : Images du Slider Hero (Accueil)
-  - name: "slider"
-    label: "Slider Hero (Accueil)"
-    label_singular: "Diapositive"
-    folder: "content/slider"
-    create: true
-    slug: "{{order}}-{{slug}}"
-    format: "json"
-    editor:
-      preview: true
-    fields:
-      - { label: "Titre du Slide", name: "title", widget: "string", default: "Dakhla & La Dune Blanche" }
-      - { label: "Badge / Tag (ex: SAHARA OCÉANIQUE)", name: "tag", widget: "string", default: "Sahara Océanique" }
-      - { label: "Sous-titre / Description", name: "subtitle", widget: "string", default: "Lagon turquoise & aventure 4x4 sauvage" }
-      - { label: "Photo / Image du Slide", name: "image", widget: "image" }
-      - { label: "Ordre d'affichage (1 = en premier)", name: "order", widget: "number", default: 1, value_type: "int" }
-      - { label: "Lien ou Destination (optionnel)", name: "link", widget: "string", required: false }
-
-  # 3. Collection : Questions Fréquentes (FAQ)
-  - name: "faq"
-    label: "Questions Fréquentes (FAQ)"
-    label_singular: "Question FAQ"
-    folder: "content/faq"
-    create: true
-    slug: "{{slug}}"
-    format: "json"
-    fields:
-      - { label: "Question", name: "question", widget: "string" }
-      - { label: "Réponse", name: "answer", widget: "text" }
-      - { label: "Ordre", name: "order", widget: "number", default: 1 }
-
-  # 4. Collection : Galerie Instagram (@smart_orga) - Option B
+  # COLLECTION 2 : Galerie Instagram
   - name: "instagram_gallery"
-    label: "Galerie Instagram (@smart_orga)"
-    label_singular: "Publication Instagram"
-    folder: "content/instagram"
+    label: "Instants Instagram"
+    folder: "src/content/instagram"
     create: true
-    slug: "{{order}}-{{slug}}"
-    format: "json"
-    editor:
-      preview: true
+    slug: "{{slug}}"
     fields:
-      - { label: "Lieu / Destination", name: "location", widget: "string", default: "Merzouga, Sahara" }
-      - { label: "Légende / Caption", name: "caption", widget: "string", default: "Coucher de soleil doré et caravane dans les dunes de l'Erg Chebbi ✨🐪" }
-      - { label: "Photo / Image du Post", name: "image", widget: "image" }
-      - { label: "Lien Instagram du post (optionnel)", name: "post_url", widget: "string", default: "https://www.instagram.com/smart_orga/", required: false }
-      - { label: "Nombre de Likes (estimé)", name: "likes", widget: "number", default: 600, value_type: "int", required: false }
-      - { label: "Nombre de Commentaires", name: "comments", widget: "number", default: 45, value_type: "int", required: false }
-      - { label: "Ordre d'affichage (1 = en premier)", name: "order", widget: "number", default: 1, value_type: "int" }
+      - { label: "Lieu", name: "location", widget: "string" }
+      - { label: "Légende", name: "caption", widget: "text" }
+      - { label: "Image", name: "image", widget: "image" }
+      - { label: "Lien Instagram", name: "post_url", widget: "string" }
+      - { label: "Likes", name: "likes", widget: "number", default: 500 }
+      - { label: "Commentaires", name: "comments", widget: "number", default: 30 }
+      - { label: "Ordre d'affichage", name: "order", widget: "number", default: 1 }
