@@ -62,7 +62,7 @@ collections:
       - { label: "Réponse", name: "answer", widget: "text" }
       - { label: "Ordre", name: "order", widget: "number", default: 1 }
 
-  # 4. Collection : Galerie Instagram (@smart_orga) - Option B
+  # 4. Collection : Galerie Instagram (@smart_orga)
   - name: "instagram_gallery"
     label: "Galerie Instagram (@smart_orga)"
     label_singular: "Publication Instagram"
@@ -79,4 +79,22 @@ collections:
       - { label: "Lien Instagram du post (optionnel)", name: "post_url", widget: "string", default: "https://www.instagram.com/smart_orga/", required: false }
       - { label: "Nombre de Likes (estimé)", name: "likes", widget: "number", default: 600, value_type: "int", required: false }
       - { label: "Nombre de Commentaires", name: "comments", widget: "number", default: 45, value_type: "int", required: false }
+      - { label: "Ordre d'affichage (1 = en premier)", name: "order", widget: "number", default: 1, value_type: "int" }
+
+  # 5. Collection : L'Équipe Smart Orga
+  - name: "team"
+    label: "L'Équipe Smart Orga"
+    label_singular: "Membre de l'Équipe"
+    folder: "content/team"
+    create: true
+    slug: "{{order}}-{{slug}}"
+    format: "json"
+    editor:
+      preview: true
+    fields:
+      - { label: "Nom complet", name: "title", widget: "string", default: "Yassine El Amrani" }
+      - { label: "Rôle / Poste", name: "role", widget: "string", default: "Co-fondateur & Chef d'expédition" }
+      - { label: "Photo de profil", name: "image", widget: "image" }
+      - { label: "Biographie / Description", name: "bio", widget: "text" }
+      - { label: "Spécialité / Tag", name: "tag", widget: "string", default: "Désert & Haut Atlas" }
       - { label: "Ordre d'affichage (1 = en premier)", name: "order", widget: "number", default: 1, value_type: "int" }
