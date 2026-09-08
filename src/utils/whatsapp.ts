@@ -1,10 +1,11 @@
 import { WHATSAPP_NUMBER } from '../data/tripsData';
 
-// Sécurisation du numéro
-const cleanPhoneNumber = (phone: any) => (typeof phone === 'string' ? phone.replace(/[^0-9]/g, '') : '');
+// Helper pour nettoyer le numéro de téléphone
+const cleanPhoneNumber = (phone: any) => 
+  (typeof phone === 'string' ? phone : String(phone || '')).replace(/[^0-9]/g, '');
 
 /**
- * Message générique
+ * 1. Message générique
  */
 export const createGeneralWhatsAppUrl = (lang: any = 'fr'): string => {
   const isAr = lang === 'ar';
@@ -16,7 +17,7 @@ export const createGeneralWhatsAppUrl = (lang: any = 'fr'): string => {
 };
 
 /**
- * Message rapide de réservation
+ * 2. Message rapide de réservation d'un voyage
  */
 export const createTripWhatsAppUrl = (trip: any, lang: any = 'fr'): string => {
   const isAr = lang === 'ar';
@@ -31,7 +32,7 @@ export const createTripWhatsAppUrl = (trip: any, lang: any = 'fr'): string => {
 };
 
 /**
- * Message complet du formulaire (Signature ultra-flexible)
+ * 3. Message de formulaire de réservation standard (BookingModal)
  */
 export const createFormBookingWhatsAppUrl = (
   trip: any, 
@@ -58,6 +59,34 @@ export const createFormBookingWhatsAppUrl = (
   return `https://wa.me/${cleanPhoneNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`;
 };
 
-// Aliases au cas où d'autres composants réclament un nom légèrement différent
+/**
+ * 4. Message pour la demande sur-mesure (SurMesureModal) - Fonction corrigée
+ */
+export const createSurMesureWhatsAppUrl = (
+  formData?: any, 
+  lang?: any
+): string => {
+  const isAr = lang === 'ar' || formData === 'ar';
+  const data = typeof formData === 'object' ? formData : {};
+
+  const destination = data?.destination || 'Destination non spécifiée';
+  const name = data?.name || 'Non renseigné';
+  const travelers = data?.travelers || data?.guests || 'Non spécifié';
+  const budget = data?.budget ? `\n- Budget estimé: ${data.budget}` : '';
+  const date = data?.date || 'Non spécifiée';
+  const notes = data?.notes || data?.message ? `\n- Détails: ${data.notes || data.message}` : '';
+
+  let text = '';
+
+  if (isAr) {
+    text = `مرحباً فريق Smart Orga،\n\nأود طلب رحلة على المقاس (Sur Mesure):\n- الوجهة: ${destination}\n- الاسم: ${name}\n- عدد المسافرين: ${travelers}\n- التاريخ: ${date}${budget}${notes}\n\nهل يمكنك التواصل معي لترتيب البرنامج؟ شكراً!`;
+  } else {
+    text = `Bonjour l'équipe Smart Orga,\n\nJe souhaite obtenir un devis pour un voyage sur-mesure :\n- Destination : ${destination}\n- Nom : ${name}\n- Nombre de personnes : ${travelers}\n- Date souhaitée : ${date}${budget}${notes}\n\nPourriez-vous me recontacter pour discuter du programme ? Merci !`;
+  }
+
+  return `https://wa.me/${cleanPhoneNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`;
+};
+
+// Aliases de sécurité
 export const createBookingWhatsAppUrl = createFormBookingWhatsAppUrl;
 export const getWhatsAppUrl = createFormBookingWhatsAppUrl;
