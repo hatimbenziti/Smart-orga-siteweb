@@ -1,3 +1,5 @@
+export const WHATSAPP_NUMBER = '+212690060366';
+
 export interface Trip {
   id: string;
   title: string;
@@ -70,7 +72,7 @@ export const DEFAULT_TRIPS: Trip[] = [
   }
 ];
 
-// Chargement automatique des fichiers JSON créés par le dashboard Decap CMS
+// Chargement dynamique des voyages enregistrés via le Dashboard Decap CMS
 const loadCmsTrips = (): Trip[] => {
   try {
     const globFiles = import.meta.glob<Record<string, any>>(
@@ -110,6 +112,4 @@ const loadCmsTrips = (): Trip[] => {
 };
 
 const cmsList = loadCmsTrips();
-
-// Combine les voyages ajoutés depuis le Dashboard avec les voyages par défaut
 export const tripsData: Trip[] = cmsList.length > 0 ? [...cmsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
