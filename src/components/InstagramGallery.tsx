@@ -124,8 +124,17 @@ export const InstagramGallery: React.FC = () => {
   // Load Decap CMS JSON files via Vite import.meta.glob
   const cmsPosts = useMemo<InstagramPost[]>(() => {
     try {
+      // Recherche élargie sur tous les chemins possibles créés par Decap CMS
       const globFiles = (import.meta as any).glob
-        ? (import.meta as any).glob('/content/instagram/*.json', { eager: true })
+        ? (import.meta as any).glob(
+            [
+              '/src/content/instagram/*.json',
+              '/src/data/instagram/*.json',
+              '/content/instagram/*.json',
+              '/public/content/instagram/*.json'
+            ],
+            { eager: true }
+          )
         : {};
       const items: InstagramPost[] = [];
 
