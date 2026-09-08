@@ -26,7 +26,8 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
   const highlights = getTripHighlights(trip, language);
   const nextDate = getTripNextDate(trip, language);
 
-  const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
+  // Correction : Transmission directe de 'language' (ex: 'fr' ou 'ar')
+  const directWhatsAppUrl = createTripWhatsAppUrl(trip, language);
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col group">
@@ -112,7 +113,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
               {t.cardHighlights}
             </span>
-            {highlights.slice(0, 3).map((item, index) => (
+            {(highlights || []).slice(0, 3).map((item, index) => (
               <div key={index} className="flex items-start gap-2 text-xs text-slate-600 leading-snug">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                 <span className="line-clamp-1">{item}</span>
@@ -123,16 +124,16 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
 
         {/* Footer info & CTA */}
         <div className="pt-4 border-t border-slate-100 space-y-3">
-          {/* Price */}
+          {/* Price - Sécurisation absolue contre le crash toLocaleString */}
           <div className="flex items-baseline justify-between">
             <div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-extrabold text-slate-900">
-                  {trip.priceMAD.toLocaleString()} <span className="text-sm font-semibold">MAD</span>
+                  {((trip?.priceMAD ?? trip?.price) ?? 0).toLocaleString()} <span className="text-sm font-semibold">MAD</span>
                 </span>
-                {trip.originalPriceMAD && (
+                {(trip?.originalPriceMAD || trip?.originalPrice) && (
                   <span className="text-xs text-slate-400 line-through">
-                    {trip.originalPriceMAD.toLocaleString()} MAD
+                    {((trip?.originalPriceMAD ?? trip?.originalPrice) ?? 0).toLocaleString()} MAD
                   </span>
                 )}
               </div>
