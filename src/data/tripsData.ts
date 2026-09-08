@@ -13,7 +13,6 @@ export interface Trip {
   highlights: string[];
 }
 
-// 1. VOYAGES PAR DÉFAUT (Affichés par sécurité si le CMS est vide)
 export const DEFAULT_TRIPS: Trip[] = [
   {
     id: 'merzouga-desert',
@@ -71,24 +70,16 @@ export const DEFAULT_TRIPS: Trip[] = [
   }
 ];
 
-// 2. IMPORTATION DYNAMIQUE DECAP CMS (Vite import.meta.glob)
-const getCmsTrips = (): Trip[] => {
+const loadCmsTrips = (): Trip[] => {
   try {
-    const globFiles = (import.meta as any).glob
-      ? (import.meta as any).glob(
-          [
-            '/src/content/trips/*.json',
-            '/src/data/trips/*.json',
-            '/content/trips/*.json'
-          ],
-          { eager: true }
-        )
-      : {};
+    const globFiles = import.meta.glob<Record<string, any>>(
+      ['/src/content/trips/*.json', '/content/trips/*.json'],
+      { eager: true }
+    );
 
     const items: Trip[] = [];
-
     Object.entries(globFiles).forEach(([, content], idx) => {
-      const data = ((content as any).default || content) as Partial<Trip>;
+      const data = content.default || content;
       if (data && data.title) {
         items.push({
           id: data.id || `cms-trip-${idx}`,
@@ -108,15 +99,10 @@ const getCmsTrips = (): Trip[] => {
     });
 
     return items;
-  } catch (err) {
-    console.error("Erreur lors du chargement des voyages CMS:", err);
+  } catch (e) {
     return [];
   }
 };
 
-// 3. EXPORTATION DES DONNÉES
-const cmsTripsList = getCmsTrips();
-
-// Si le CMS contient des voyages, on affiche les voyages du CMS + les voyages par défaut
-// Si vous voulez UNIQUEMENT les voyages du CMS dès qu'il y en a un, remplacez par : cmsTripsList.length > 0 ? cmsTripsList : DEFAULT_TRIPS
-export const tripsData: Trip[] = cmsTripsList.length > 0 ? [...cmsTripsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
+const cmsList = loadCmsTrips();
+export const tripsData: Trip[] = cmsList.length > 0 ? [...cmsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
