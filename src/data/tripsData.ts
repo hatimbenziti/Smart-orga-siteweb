@@ -142,3 +142,6 @@ const loadCmsTrips = (): Trip[] => {
 
 const cmsList = loadCmsTrips();
 export const tripsData: Trip[] = cmsList.length > 0 ? [...cmsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
+
+// Alias d'export pour satisfaire l'import dans App.tsx
+export { tripsData as TRIPS_DATA };
