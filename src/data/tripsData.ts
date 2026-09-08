@@ -1,6 +1,19 @@
 export const WHATSAPP_NUMBER = '+212690060366';
 export const WHATSAPP_DISPLAY = '+212 690-060366';
 
+export const HERO_SLIDES = [
+  {
+    image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80',
+    title: 'Découvrez la Magie du Maroc',
+    subtitle: 'Des déserts dorés aux côtes atlantiques'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1920&q=80',
+    title: 'Aventures Inoubliables',
+    subtitle: 'Circuits sur mesure et départs garantis'
+  }
+];
+
 export interface Trip {
   id: string;
   title: string;
