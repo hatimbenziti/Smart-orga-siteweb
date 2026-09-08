@@ -101,7 +101,7 @@ export const DEFAULT_TRIPS: Trip[] = [
   }
 ];
 
-// --- CHARGEMENT DYNAMIQUE DECAP CMS ---
+// --- CHARGEMENT SÉCURISÉ DES DONNÉES CMS ---
 const loadCmsTrips = (): Trip[] => {
   try {
     const globFiles = import.meta.glob<Record<string, any>>(
@@ -115,21 +115,24 @@ const loadCmsTrips = (): Trip[] => {
 
     const items: Trip[] = [];
     Object.entries(globFiles).forEach(([, content], idx) => {
-      const data = content.default || content;
-      if (data && data.title) {
+      const data = content?.default || content;
+      if (data && typeof data === 'object' && data.title) {
+        const parsedPrice = Number(data.price);
+        const parsedOrigPrice = Number(data.originalPrice);
+
         items.push({
-          id: data.id || `cms-trip-${idx}`,
-          title: data.title,
-          subtitle: data.subtitle || 'Maroc',
+          id: String(data.id || `cms-trip-${idx}`),
+          title: String(data.title),
+          subtitle: String(data.subtitle || 'Maroc'),
           category: data.category || 'Désert & Dunes',
-          price: Number(data.price) || 1000,
-          originalPrice: data.originalPrice ? Number(data.originalPrice) : undefined,
-          duration: data.duration || '2 jours / 1 nuit',
-          image: data.image || DEFAULT_TRIPS[0].image,
-          isPopular: data.isPopular ?? true,
+          price: !isNaN(parsedPrice) && parsedPrice > 0 ? parsedPrice : 1000,
+          originalPrice: !isNaN(parsedOrigPrice) && parsedOrigPrice > 0 ? parsedOrigPrice : undefined,
+          duration: String(data.duration || '2 jours / 1 nuit'),
+          image: String(data.image || DEFAULT_TRIPS[0].image),
+          isPopular: Boolean(data.isPopular ?? true),
           rating: Number(data.rating) || 4.9,
           reviewsCount: Number(data.reviewsCount) || 50,
-          highlights: Array.isArray(data.highlights) ? data.highlights : ['Circuit guidé grand confort']
+          highlights: Array.isArray(data.highlights) ? data.highlights.map(String) : ['Circuit guidé grand confort']
         });
       }
     });
@@ -143,5 +146,4 @@ const loadCmsTrips = (): Trip[] => {
 const cmsList = loadCmsTrips();
 export const tripsData: Trip[] = cmsList.length > 0 ? [...cmsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
 
-// Alias d'export pour satisfaire l'import dans App.tsx
 export { tripsData as TRIPS_DATA };
