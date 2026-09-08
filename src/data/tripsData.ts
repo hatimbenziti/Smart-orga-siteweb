@@ -70,10 +70,15 @@ export const DEFAULT_TRIPS: Trip[] = [
   }
 ];
 
+// Chargement automatique des fichiers JSON créés par le dashboard Decap CMS
 const loadCmsTrips = (): Trip[] => {
   try {
     const globFiles = import.meta.glob<Record<string, any>>(
-      ['/src/content/trips/*.json', '/content/trips/*.json'],
+      [
+        '/src/content/trips/*.json',
+        '/content/trips/*.json',
+        '/src/data/trips/*.json'
+      ],
       { eager: true }
     );
 
@@ -105,4 +110,6 @@ const loadCmsTrips = (): Trip[] => {
 };
 
 const cmsList = loadCmsTrips();
+
+// Combine les voyages ajoutés depuis le Dashboard avec les voyages par défaut
 export const tripsData: Trip[] = cmsList.length > 0 ? [...cmsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
