@@ -14,6 +14,17 @@ export const HERO_SLIDES = [
   }
 ];
 
+export const FAQ_DATA = [
+  {
+    question: 'Comment réserver un voyage ?',
+    answer: 'Vous pouvez réserver directement via notre bouton WhatsApp ou par formulaire.'
+  },
+  {
+    question: 'Quels sont les modes de paiement acceptés ?',
+    answer: 'Nous acceptons les virement bancaires et le paiement en espèces à l\'agence.'
+  }
+];
+
 export interface Trip {
   id: string;
   title: string;
