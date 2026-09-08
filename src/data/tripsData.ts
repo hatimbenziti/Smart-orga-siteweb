@@ -1,5 +1,8 @@
+// --- CONSTANTES GLOBALES ---
 export const WHATSAPP_NUMBER = '+212690060366';
 export const WHATSAPP_DISPLAY = '+212 690-060366';
+export const AGENCY_EMAIL = 'contact@smartorga.com';
+export const AGENCY_ADDRESS = 'Marrakech, Maroc';
 
 export const HERO_SLIDES = [
   {
@@ -21,10 +24,11 @@ export const FAQ_DATA = [
   },
   {
     question: 'Quels sont les modes de paiement acceptés ?',
-    answer: 'Nous acceptons les virement bancaires et le paiement en espèces à l\'agence.'
+    answer: 'Nous acceptons les virements bancaires et le paiement en espèces à l\'agence.'
   }
 ];
 
+// --- INTERFACES & DATA VOYAGES ---
 export interface Trip {
   id: string;
   title: string;
@@ -97,6 +101,7 @@ export const DEFAULT_TRIPS: Trip[] = [
   }
 ];
 
+// --- CHARGEMENT DYNAMIQUE DECAP CMS ---
 const loadCmsTrips = (): Trip[] => {
   try {
     const globFiles = import.meta.glob<Record<string, any>>(
