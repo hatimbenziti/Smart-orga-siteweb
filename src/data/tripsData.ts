@@ -1,4 +1,5 @@
 export const WHATSAPP_NUMBER = '+212690060366';
+export const WHATSAPP_DISPLAY = '+212 690-060366';
 
 export interface Trip {
   id: string;
@@ -72,7 +73,6 @@ export const DEFAULT_TRIPS: Trip[] = [
   }
 ];
 
-// Chargement dynamique des voyages enregistrés via le Dashboard Decap CMS
 const loadCmsTrips = (): Trip[] => {
   try {
     const globFiles = import.meta.glob<Record<string, any>>(
