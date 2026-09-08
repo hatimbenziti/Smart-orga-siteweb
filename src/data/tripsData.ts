@@ -1,9 +1,12 @@
 import { Trip } from '../types';
 
-// Vider le tableau des voyages
+// Tableau vide pour supprimer les voyages de démo
 export const tripsData: Trip[] = [];
 
-// Garder les helpers pour éviter les erreurs de compilation dans le reste du site
+// Exporter la variable par défaut au cas où elle est importée sous un autre nom
+export default tripsData;
+
+// Garder les fonctions utilitaires pour éviter d'interrompre la compilation TypeScript
 export const getTripById = (id: string): Trip | undefined => {
   return tripsData.find((trip) => trip.id === id);
 };
