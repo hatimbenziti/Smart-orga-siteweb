@@ -1,10 +1,10 @@
 import { Trip } from '../types';
 
-// Variables requises par Navbar.tsx et whatsapp.ts
+// --- CONFIGURATION WHATSAPP ---
 export const WHATSAPP_NUMBER = "212600000000";
 export const WHATSAPP_DISPLAY = "+212 6 00 00 00 00";
 
-// Fallback pour le slider Hero importé par Hero.tsx
+// --- HERO SLIDES ---
 export const HERO_SLIDES = [
   {
     image: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70",
@@ -13,7 +13,17 @@ export const HERO_SLIDES = [
   }
 ];
 
-// Importation dynamique des fichiers JSON depuis content/voyages/ ou content/trips/
+// --- FAQ DATA ---
+export const FAQ_DATA = [
+  {
+    question: "Comment effectuer une réservation ?",
+    questionAr: "كيف يمكنني إجراء الحجز؟",
+    answer: "Vous pouvez réserver directement via notre site ou par WhatsApp.",
+    answerAr: "يمكنك الحجز مباشرة عبر موقعنا أو عبر الواتساب."
+  }
+];
+
+// --- VOYAGES & DÉPLACEMENTS (DECAP CMS) ---
 const modules = import.meta.glob([
   '/content/voyages/*.json',
   '/content/trips/*.json',
