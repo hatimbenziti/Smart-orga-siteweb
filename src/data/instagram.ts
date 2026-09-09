@@ -1,19 +1,13 @@
-// Importation dynamique de tous les fichiers .json créés par Decap CMS dans content/instagram/
-const cmsInstaModules = import.meta.glob([
-  '../../content/instagram/*.json',
-  '../content/instagram/*.json'
-], { eager: true });
+const modules = import.meta.glob('/content/instagram/*.json', { eager: true });
 
-export const instagramPosts = Object.values(cmsInstaModules).map((fileModule: any) => {
-  const data = fileModule.default || fileModule;
+export const instagramPosts = Object.values(modules).map((file: any) => {
+  const data = file.default || file;
   return {
     id: data.id || Math.random().toString(),
-    image: data.image || data.imageUrl || '',
+    image: data.image || '',
     caption: data.caption || '',
-    location: data.location || 'Maroc',
-    post_url: data.post_url || data.link || 'https://www.instagram.com/smart_orga/',
-    likes: data.likes || 0,
-    comments: data.comments || 0
+    location: data.location || '',
+    post_url: data.post_url || 'https://www.instagram.com/smart_orga/'
   };
 });
 
