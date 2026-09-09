@@ -1,12 +1,20 @@
 import { Trip } from '../types';
 
-// Utilisation d'un chemin relatif strict pour éviter les échecs de résolution Vite
-const modules = import.meta.glob('../../content/voyages/*.json', { eager: true });
+// Numéro WhatsApp requis par src/utils/whatsapp.ts
+export const WHATSAPP_NUMBER = "212600000000"; // Remplacez par votre vrai numéro (ex: 212612345678)
+
+// Importation dynamique des fichiers JSON depuis content/voyages/ ou content/trips/
+const modules = import.meta.glob([
+  '/content/voyages/*.json',
+  '/content/trips/*.json',
+  '../../content/voyages/*.json',
+  '../../content/trips/*.json'
+], { eager: true });
 
 export const trips: Trip[] = Object.values(modules).map((file: any) => {
   const data = file.default || file;
   return {
-    id: data.id || Math.random().toString(),
+    id: data.id || (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : Math.random().toString()),
     title: data.title || '',
     titleAr: data.titleAr || '',
     destination: data.destination || '',
