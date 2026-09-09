@@ -1,7 +1,7 @@
 import { Trip } from '../types';
 
-// Importation sécurisée qui ne fait pas planter le build si aucun fichier JSON n'existe
-const modules = import.meta.glob('/content/voyages/*.json', { eager: true });
+// Utilisation d'un chemin relatif strict pour éviter les échecs de résolution Vite
+const modules = import.meta.glob('../../content/voyages/*.json', { eager: true });
 
 export const trips: Trip[] = Object.values(modules).map((file: any) => {
   const data = file.default || file;
@@ -14,7 +14,7 @@ export const trips: Trip[] = Object.values(modules).map((file: any) => {
     region: data.region || 'Maroc',
     priceMAD: Number(data.priceMAD || data.price || 0),
     days: Number(data.days || 1),
-    duration: data.duration || '',
+    duration: data.duration || `${data.days || 1} Jours`,
     image: data.image || '',
     groupSize: data.groupSize || 'Flexible',
     departureCities: Array.isArray(data.departureCities) ? data.departureCities : [],
@@ -25,4 +25,5 @@ export const trips: Trip[] = Object.values(modules).map((file: any) => {
   };
 });
 
+export const tripsData = trips;
 export default trips;
