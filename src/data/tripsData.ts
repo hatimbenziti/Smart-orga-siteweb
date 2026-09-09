@@ -55,5 +55,8 @@ export const trips: Trip[] = Object.values(modules).map((file: any) => {
   };
 });
 
+// Alias requis par les composants (App.tsx, etc.)
+export const TRIPS_DATA = trips;
 export const tripsData = trips;
+
 export default trips;
