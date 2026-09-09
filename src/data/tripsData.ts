@@ -1,7 +1,8 @@
 import { Trip } from '../types';
 
-// Numéro WhatsApp requis par src/utils/whatsapp.ts
-export const WHATSAPP_NUMBER = "212600000000"; // Remplacez par votre vrai numéro (ex: 212612345678)
+// Constantes WhatsApp requises par Navbar.tsx et whatsapp.ts
+export const WHATSAPP_NUMBER = "212600000000"; // Remplacez par votre numéro au format international
+export const WHATSAPP_DISPLAY = "+212 6 00 00 00 00"; // Le texte affiché sur la Navbar
 
 // Importation dynamique des fichiers JSON depuis content/voyages/ ou content/trips/
 const modules = import.meta.glob([
