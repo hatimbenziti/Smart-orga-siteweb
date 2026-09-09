@@ -1,174 +1,107 @@
 import React from 'react';
 import { Trip } from '../types';
-import { Clock, Calendar, CheckCircle2, Star, Users, MapPin, Eye, MessageCircle, Sun } from 'lucide-react';
-import { createTripWhatsAppUrl } from '../utils/whatsapp';
-import { useLanguage } from '../context/LanguageContext';
-import {
-  getTripTitle,
-  getTripDestination,
-  getTripDuration,
-  getTripHighlights,
-  getTripNextDate
-} from '../utils/localized';
+import { Calendar, MapPin, Users, Clock, CheckCircle } from 'lucide-react';
 
 interface TripCardProps {
   trip: Trip;
-  onOpenDetails: (trip: Trip) => void;
-  onOpenBookingModal: (trip: Trip) => void;
+  onSelect: (trip: Trip) => void;
+  onBook: (trip: Trip) => void;
 }
 
-export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenBookingModal }) => {
-  const { language, t } = useLanguage();
+// Nettoyage des chemins d'images générés par Decap CMS
+const formatImagePath = (path?: string) => {
+  if (!path) return 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=800&q=80';
+  if (path.startsWith('public/')) return path.replace('public/', '/');
+  if (!path.startsWith('/') && !path.startsWith('http')) return `/${path}`;
+  return path;
+};
 
-  const title = getTripTitle(trip, language);
-  const destination = getTripDestination(trip, language);
-  const duration = getTripDuration(trip, language);
-  const highlights = getTripHighlights(trip, language);
-  const nextDate = getTripNextDate(trip, language);
-
-  // Correction : Transmission directe de 'language' (ex: 'fr' ou 'ar')
-  const directWhatsAppUrl = createTripWhatsAppUrl(trip, language);
-
+export const TripCard: React.FC<TripCardProps> = ({ trip, onSelect, onBook }) => {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col group">
-      {/* Image container */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+    <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
+      {/* Container Image */}
+      <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
         <img
-          src={trip.image}
-          alt={title}
+          src={formatImagePath(trip.image)}
+          alt={trip.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-          referrerPolicy="no-referrer"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=800&q=80';
+          }}
         />
-
-        {/* Top Badges */}
-        <div className="absolute top-3 start-3 flex flex-wrap gap-1.5 z-10">
-          <span className="px-2.5 py-1 rounded-lg bg-blue-600/90 backdrop-blur-md text-white text-[11px] font-bold tracking-wide shadow-xs">
-            {trip.region}
-          </span>
-          {trip.isPopular && (
-            <span className="px-2.5 py-1 rounded-lg bg-amber-500/90 backdrop-blur-md text-white text-[11px] font-bold shadow-xs">
-              {t.cardPopular}
-            </span>
-          )}
-        </div>
-
-        {/* Duration badge at bottom-end of image */}
-        <div className="absolute bottom-3 end-3 z-10">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900/80 backdrop-blur-md text-white text-xs font-semibold shadow-xs">
-            <Clock className="w-3.5 h-3.5 text-blue-400" />
-            {duration}
+        <div className="absolute top-3 left-3 flex gap-2">
+          <span className="px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-xs font-semibold">
+            {trip.region || 'Maroc'}
           </span>
         </div>
-
-        {/* Rating pill top-end */}
-        <div className="absolute top-3 end-3 z-10">
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/95 backdrop-blur-md text-slate-800 text-xs font-bold shadow-xs">
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span>{trip.rating}</span>
-            <span className="text-slate-400 font-normal">({trip.reviewCount})</span>
-          </div>
+        <div className="absolute bottom-3 right-3">
+          <span className="px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            {trip.duration || `${trip.days || 1} Jours`}
+          </span>
         </div>
       </div>
 
-      {/* Card Body */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        <div>
-          {/* Destination location line */}
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-1.5">
-            <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span>{destination}</span>
-          </div>
-
-          {/* Title */}
-          <h3
-            onClick={() => onOpenDetails(trip)}
-            className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug cursor-pointer line-clamp-2"
-          >
-            {title}
-          </h3>
-
-          {/* Next departure date & cities */}
-          <div className="mt-2.5 flex items-center justify-between text-xs text-slate-600 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span className="font-medium text-slate-700">{nextDate}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {trip.weather && (
-                <div className="flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60">
-                  <Sun className="w-3 h-3 text-amber-500 shrink-0" />
-                  <span>{trip.weather.temp}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-1 text-[11px] text-slate-400">
-                <Users className="w-3 h-3" />
-                <span>{trip.groupSize}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Points Forts (Highlights) */}
-          <div className="mt-3.5 space-y-1.5">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-              {t.cardHighlights}
-            </span>
-            {(highlights || []).slice(0, 3).map((item, index) => (
-              <div key={index} className="flex items-start gap-2 text-xs text-slate-600 leading-snug">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span className="line-clamp-1">{item}</span>
-              </div>
-            ))}
-          </div>
+      {/* Contenu */}
+      <div className="p-5 flex flex-col flex-grow">
+        <div className="flex items-center gap-1 text-xs font-semibold text-emerald-600 mb-1">
+          <MapPin className="w-3.5 h-3.5" />
+          <span>{trip.destination}</span>
         </div>
 
-        {/* Footer info & CTA */}
-        <div className="pt-4 border-t border-slate-100 space-y-3">
-          {/* Price - Sécurisation absolue contre le crash toLocaleString */}
-          <div className="flex items-baseline justify-between">
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-extrabold text-slate-900">
-                  {((trip?.priceMAD ?? trip?.price) ?? 0).toLocaleString()} <span className="text-sm font-semibold">MAD</span>
-                </span>
-                {(trip?.originalPriceMAD || trip?.originalPrice) && (
-                  <span className="text-xs text-slate-400 line-through">
-                    {((trip?.originalPriceMAD ?? trip?.originalPrice) ?? 0).toLocaleString()} MAD
-                  </span>
-                )}
-              </div>
-              <span className="text-[11px] text-slate-500 font-medium">
-                {t.cardPerPerson}
-              </span>
-            </div>
+        <h3 className="text-lg font-bold text-slate-900 mb-3 line-clamp-1 group-hover:text-emerald-600 transition-colors">
+          {trip.title}
+        </h3>
 
-            <button
-              onClick={() => onOpenDetails(trip)}
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1 cursor-pointer hover:underline"
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span>{t.cardItinerary}</span>
-            </button>
+        {/* Date / Information de départ */}
+        <div className="flex items-center justify-between text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl mb-4">
+          <span className="flex items-center gap-1.5 font-medium">
+            <Calendar className="w-4 h-4 text-emerald-600" />
+            {(trip as any).nextDeparture || (trip as any).date || 'Départs chaque semaine'}
+          </span>
+          <span className="flex items-center gap-1 text-slate-400">
+            <Users className="w-3.5 h-3.5" />
+            {trip.groupSize || 'Flexible'}
+          </span>
+        </div>
+
+        {/* Points forts */}
+        {trip.highlights && trip.highlights.length > 0 && (
+          <div className="mb-4">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Points Forts :</p>
+            <ul className="space-y-1">
+              {trip.highlights.slice(0, 2).map((h, i) => (
+                <li key={i} className="text-xs text-slate-600 flex items-center gap-1.5 truncate">
+                  <CheckCircle className="w-3 h-3 text-emerald-500 shrink-0" />
+                  <span className="truncate">{h}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Prix & Boutons */}
+        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <div className="text-xl font-extrabold text-slate-900">
+              {trip.priceMAD ? trip.priceMAD.toLocaleString() : 'Sur devis'} <span className="text-xs font-semibold text-slate-500">MAD</span>
+            </div>
+            <span className="text-[10px] text-slate-400 block">Par personne • Tout compris</span>
           </div>
 
-          {/* Buttons: WhatsApp Reservation & Custom Booking */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="flex gap-2">
             <button
-              onClick={() => onOpenBookingModal(trip)}
-              className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              onClick={() => onSelect(trip)}
+              className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              <span>{t.cardCustomize}</span>
+              Programme
             </button>
-
-            <a
-              href={directWhatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-xs hover:shadow-emerald-600/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center"
+            <button
+              onClick={() => onBook(trip)}
+              className="px-3 py-2 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
             >
-              <MessageCircle className="w-4 h-4 fill-current shrink-0" />
-              <span>{t.cardBookWhatsApp}</span>
-            </a>
+              Réserver
+            </button>
           </div>
         </div>
       </div>
