@@ -1,8 +1,17 @@
 import { Trip } from '../types';
 
-// Constantes WhatsApp requises par Navbar.tsx et whatsapp.ts
-export const WHATSAPP_NUMBER = "212600000000"; // Remplacez par votre numéro au format international
-export const WHATSAPP_DISPLAY = "+212 6 00 00 00 00"; // Le texte affiché sur la Navbar
+// Variables requises par Navbar.tsx et whatsapp.ts
+export const WHATSAPP_NUMBER = "212600000000";
+export const WHATSAPP_DISPLAY = "+212 6 00 00 00 00";
+
+// Fallback pour le slider Hero importé par Hero.tsx
+export const HERO_SLIDES = [
+  {
+    image: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70",
+    title: "Aventures Uniques au Maroc",
+    subtitle: "Découvrez nos destinations exclusives"
+  }
+];
 
 // Importation dynamique des fichiers JSON depuis content/voyages/ ou content/trips/
 const modules = import.meta.glob([
