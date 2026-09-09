@@ -25,14 +25,15 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const duration = getTripDuration(trip, language);
   const nextDate = getTripNextDate(trip, language);
 
-  const weatherTemp = trip.weather?.temp || (trip.region === 'Désert & Dunes' ? '26°C' : trip.region === 'Plages & Surf' ? '24°C' : '22°C');
+  const weatherTemp = trip?.weather?.temp || (trip?.region === 'Désert & Dunes' ? '26°C' : trip?.region === 'Plages & Surf' ? '24°C' : '22°C');
   const weatherCondition = language === 'ar'
-    ? (trip.weather?.conditionAr || 'مشمس وصافٍ')
+    ? (trip?.weather?.conditionAr || 'مشمس وصافٍ')
     : language === 'en'
-    ? (trip.weather?.conditionEn || 'Sunny & Clear')
-    : (trip.weather?.condition || 'Ensoleillé & Ciel clair');
+    ? (trip?.weather?.conditionEn || 'Sunny & Clear')
+    : (trip?.weather?.condition || 'Ensoleillé & Ciel clair');
 
-  const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
+  // Transmission directe de la langue sous forme de string ('fr', 'ar', etc.)
+  const directWhatsAppUrl = createTripWhatsAppUrl(trip, language);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
@@ -41,7 +42,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
         <div className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-white/95 backdrop-blur-md border-b border-slate-100">
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wide">
-              {trip.region}
+              {trip?.region || 'Maroc'}
             </span>
             <span className="text-xs text-slate-500 font-medium">
               {duration}
@@ -104,7 +105,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               </span>
               <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5">
                 <Users className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>{trip.groupSize}</span>
+                <span>{trip.groupSize || 'Flexible'}</span>
               </div>
             </div>
             <div>
@@ -112,7 +113,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                 {language === 'ar' ? 'مدن الانطلاق' : 'Villes départ'}
               </span>
               <span className="font-bold text-slate-800 mt-0.5 block truncate">
-                {trip.departureCities.join(', ')}
+                {/* Correctif : Sécurisation de .join() */}
+                {trip?.departureCities?.join(', ') || 'Toutes les villes'}
               </span>
             </div>
             <div>
@@ -133,13 +135,14 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>{t.modalProgramTitle}</span>
               <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                {trip.days} {language === 'ar' ? 'أيام مفصلة' : 'jours'}
+                {trip.days || 1} {language === 'ar' ? 'أيام مفصلة' : 'jours'}
               </span>
             </h3>
 
             <div className={`space-y-3.5 border-s-2 border-blue-200 ${isRTL ? 'mr-3 pr-4 sm:pr-6' : 'ml-3 pl-4 sm:pl-6'}`}>
-              {trip.itinerary.map((item) => {
-                const dayForecast = trip.weather?.dailyForecast?.find(df => df.day === item.day);
+              {/* Correctif : Sécurisation de itinerary.map() */}
+              {(trip?.itinerary || []).map((item) => {
+                const dayForecast = trip?.weather?.dailyForecast?.find(df => df.day === item.day);
                 const dayCondition = language === 'ar'
                   ? (dayForecast?.conditionAr || dayForecast?.condition)
                   : language === 'en'
@@ -184,7 +187,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                 <span>{t.modalIncludedTitle}</span>
               </h4>
               <ul className="space-y-1.5 text-xs text-emerald-800">
-                {trip.included.map((inc, i) => (
+                {/* Correctif : Sécurisation de included.map() */}
+                {(trip?.included || []).map((inc, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-emerald-600 font-bold">•</span>
                     <span>{inc}</span>
@@ -199,7 +203,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                 <span>{t.modalNotIncludedTitle}</span>
               </h4>
               <ul className="space-y-1.5 text-xs text-rose-800">
-                {trip.notIncluded.map((notInc, i) => (
+                {/* Correctif : Sécurisation de notIncluded.map() */}
+                {(trip?.notIncluded || []).map((notInc, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-rose-600 font-bold">•</span>
                     <span>{notInc}</span>
@@ -222,11 +227,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             <span className="text-xs text-slate-500 font-medium block">{t.modalTotalPrice}</span>
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-extrabold text-slate-900">
-                {trip.priceMAD.toLocaleString()} <span className="text-sm font-semibold">MAD</span>
+                {/* Correctif : Sécurisation de toLocaleString() sur le prix */}
+                {((trip?.priceMAD ?? trip?.price) ?? 0).toLocaleString()} <span className="text-sm font-semibold">MAD</span>
               </span>
-              {trip.originalPriceMAD && (
+              {(trip?.originalPriceMAD || trip?.originalPrice) && (
                 <span className="text-xs text-slate-400 line-through">
-                  {trip.originalPriceMAD.toLocaleString()} MAD
+                  {((trip?.originalPriceMAD ?? trip?.originalPrice) ?? 0).toLocaleString()} MAD
                 </span>
               )}
             </div>
