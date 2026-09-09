@@ -1,8 +1,10 @@
 import { Trip } from '../types';
 
-// --- CONFIGURATION WHATSAPP ---
-export const WHATSAPP_NUMBER = "212600000000";
-export const WHATSAPP_DISPLAY = "+212 6 00 00 00 00";
+// --- CONFIGURATION & INFOS AGENCE ---
+export const WHATSAPP_NUMBER = "212690060366";
+export const WHATSAPP_DISPLAY = "+212 690-060366";
+export const AGENCY_EMAIL = "smartorga.travel@gmail.com";
+export const AGENCY_ADDRESS = "Maroc";
 
 // --- HERO SLIDES ---
 export const HERO_SLIDES = [
@@ -23,7 +25,7 @@ export const FAQ_DATA = [
   }
 ];
 
-// --- VOYAGES & DÉPLACEMENTS (DECAP CMS) ---
+// --- VOYAGES (DECAP CMS) ---
 const modules = import.meta.glob([
   '/content/voyages/*.json',
   '/content/trips/*.json',
