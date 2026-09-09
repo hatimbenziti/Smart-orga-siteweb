@@ -1,149 +1,40 @@
-// --- CONSTANTES GLOBALES ---
-export const WHATSAPP_NUMBER = '+212690060366';
-export const WHATSAPP_DISPLAY = '+212 690-060366';
-export const AGENCY_EMAIL = 'contact@smartorga.com';
-export const AGENCY_ADDRESS = 'Marrakech, Maroc';
+import { Trip } from '../types';
 
-export const HERO_SLIDES = [
-  {
-    image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80',
-    title: 'Découvrez la Magie du Maroc',
-    subtitle: 'Des déserts dorés aux côtes atlantiques'
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1920&q=80',
-    title: 'Aventures Inoubliables',
-    subtitle: 'Circuits sur mesure et départs garantis'
-  }
-];
+// Importation dynamique de tous les fichiers .json créés par Decap CMS dans content/voyages/ ou content/trips/
+const cmsTripModules = import.meta.glob([
+  '../../content/voyages/*.json',
+  '../../content/trips/*.json',
+  '../content/voyages/*.json',
+  '../content/trips/*.json'
+], { eager: true });
 
-export const FAQ_DATA = [
-  {
-    question: 'Comment réserver un voyage ?',
-    answer: 'Vous pouvez réserver directement via notre bouton WhatsApp ou par formulaire.'
-  },
-  {
-    question: 'Quels sont les modes de paiement acceptés ?',
-    answer: 'Nous acceptons les virements bancaires et le paiement en espèces à l\'agence.'
-  }
-];
+// Extraction et normalisation des données issues du CMS
+const loadedCmsTrips: Trip[] = Object.values(cmsTripModules).map((fileModule: any) => {
+  const data = fileModule.default || fileModule;
 
-// --- INTERFACES & DATA VOYAGES ---
-export interface Trip {
-  id: string;
-  title: string;
-  subtitle: string;
-  category: 'Désert & Dunes' | 'Plages & Surf' | 'Villes Impériales' | 'Nature & Randonnée';
-  price: number;
-  originalPrice?: number;
-  duration: string;
-  image: string;
-  isPopular?: boolean;
-  rating: number;
-  reviewsCount: number;
-  highlights: string[];
-}
+  return {
+    id: data.id || (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : `trip-${Math.random()}`),
+    title: data.title || 'Voyage sans titre',
+    titleAr: data.titleAr || data.title || '',
+    destination: data.destination || 'Maroc',
+    destinationAr: data.destinationAr || data.destination || '',
+    region: data.region || 'Maroc',
+    priceMAD: Number(data.priceMAD || data.price || 0),
+    originalPriceMAD: data.originalPriceMAD || data.originalPrice ? Number(data.originalPriceMAD || data.originalPrice) : undefined,
+    days: Number(data.days || data.duration || 1),
+    duration: data.duration || `${data.days || 1} Jours`,
+    durationAr: data.durationAr || '',
+    image: data.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70',
+    groupSize: data.groupSize || 'Flexible',
+    departureCities: Array.isArray(data.departureCities) ? data.departureCities : ['Toutes les villes'],
+    highlights: Array.isArray(data.highlights) ? data.highlights : [],
+    included: Array.isArray(data.included) ? data.included : [],
+    notIncluded: Array.isArray(data.notIncluded) ? data.notIncluded : [],
+    itinerary: Array.isArray(data.itinerary) ? data.itinerary : []
+  };
+});
 
-export const DEFAULT_TRIPS: Trip[] = [
-  {
-    id: 'merzouga-desert',
-    title: 'Magie du Désert de Merzouga & Gorges du Dadès',
-    subtitle: 'Merzouga & Sud Marocain',
-    category: 'Désert & Dunes',
-    price: 1450,
-    originalPrice: 1750,
-    duration: '3 jours / 2 nuits',
-    image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80',
-    isPopular: true,
-    rating: 4.9,
-    reviewsCount: 142,
-    highlights: [
-      'Nuitée en bivouac de luxe au cœur des dunes de l\'Erg Chebbi',
-      'Balade à dos de dromadaire au coucher et lever du soleil',
-      'Soirée animée autour du feu de camp avec musiciens sahraouis'
-    ]
-  },
-  {
-    id: 'dakhla-lagoon',
-    title: 'Échappée Sauvage à Dakhla & Lagon Blanc',
-    subtitle: 'Dakhla & Sahara Océanique',
-    category: 'Plages & Surf',
-    price: 2950,
-    originalPrice: 3400,
-    duration: '4 jours / 3 nuits',
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
-    isPopular: true,
-    rating: 5.0,
-    reviewsCount: 98,
-    highlights: [
-      'Excursion en 4x4 vers la Dune Blanche et le lagon',
-      'Dégustation d\'huîtres fraîches au parc ostréicole',
-      'Baignade à la source thermale d\'Asnaa (38°C sous le sable)'
-    ]
-  },
-  {
-    id: 'chefchaouen-tanger',
-    title: 'Chefchaouen la Perle Bleue & Cap Spartel Tanger',
-    subtitle: 'Chefchaouen & Tanger',
-    category: 'Villes Impériales',
-    price: 950,
-    originalPrice: 1150,
-    duration: '2 jours / 1 nuit',
-    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
-    isPopular: true,
-    rating: 4.8,
-    reviewsCount: 215,
-    highlights: [
-      'Flânerie magique dans les ruelles azurées de la médina',
-      'Coucher de soleil inoubliable depuis la Mosquée Espagnole',
-      'Visite des Grottes d\'Hercule et du mythique Cap Spartel'
-    ]
-  }
-];
+// Tableau d'export final : utilise les données CMS s'il y en a, sinon fallback sur un tableau vide
+export const trips: Trip[] = loadedCmsTrips.length > 0 ? loadedCmsTrips : [];
 
-// --- CHARGEMENT SÉCURISÉ DES DONNÉES CMS ---
-const loadCmsTrips = (): Trip[] => {
-  try {
-    const globFiles = import.meta.glob<Record<string, any>>(
-      [
-        '/src/content/trips/*.json',
-        '/content/trips/*.json',
-        '/src/data/trips/*.json'
-      ],
-      { eager: true }
-    );
-
-    const items: Trip[] = [];
-    Object.entries(globFiles).forEach(([, content], idx) => {
-      const data = content?.default || content;
-      if (data && typeof data === 'object' && data.title) {
-        const parsedPrice = Number(data.price);
-        const parsedOrigPrice = Number(data.originalPrice);
-
-        items.push({
-          id: String(data.id || `cms-trip-${idx}`),
-          title: String(data.title),
-          subtitle: String(data.subtitle || 'Maroc'),
-          category: data.category || 'Désert & Dunes',
-          price: !isNaN(parsedPrice) && parsedPrice > 0 ? parsedPrice : 1000,
-          originalPrice: !isNaN(parsedOrigPrice) && parsedOrigPrice > 0 ? parsedOrigPrice : undefined,
-          duration: String(data.duration || '2 jours / 1 nuit'),
-          image: String(data.image || DEFAULT_TRIPS[0].image),
-          isPopular: Boolean(data.isPopular ?? true),
-          rating: Number(data.rating) || 4.9,
-          reviewsCount: Number(data.reviewsCount) || 50,
-          highlights: Array.isArray(data.highlights) ? data.highlights.map(String) : ['Circuit guidé grand confort']
-        });
-      }
-    });
-
-    return items;
-  } catch (e) {
-    return [];
-  }
-};
-
-const cmsList = loadCmsTrips();
-export const tripsData: Trip[] = cmsList.length > 0 ? [...cmsList, ...DEFAULT_TRIPS] : DEFAULT_TRIPS;
-
-export { tripsData as TRIPS_DATA };
+export default trips;
